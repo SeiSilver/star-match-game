@@ -17,7 +17,7 @@ export const useGameState = () => {
     }
   });
 
-  const setGameStatus = (newCandidateNums) => {
+  const setGameState = (newCandidateNums) => {
     if (Utils.sum(newCandidateNums) !== stars) {
       setCandidateNums(newCandidateNums);
     } else {
@@ -37,6 +37,6 @@ export const useGameState = () => {
     setSecondsLeft(10);
   };
 
-  return {stars, availableNums, candidateNums, secondsLeft, setGameState: setGameStatus, setNewGame}
+  return {stars, availableNums, candidateNums, secondsLeft, setGameState, setNewGame}
 
 }
