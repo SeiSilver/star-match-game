@@ -4,6 +4,7 @@ import StarMatch from "./component/StarMatch";
 function App() {
   return (
     <div className="App">
+
       <StarMatch/>
     </div>
   );

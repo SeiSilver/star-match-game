@@ -4,6 +4,7 @@ import StarList from "./StarList";
 import {AVAILABLE, USED} from "../constanst/NumberStatus";
 import PlayNumberList from "./PlayNumberList";
 import PlayAgainBtn from "./PlayAgainBtn";
+import {ACTIVE, LOST, WIN} from "../constanst/GameStatus";
 
 
 const StarMatch = () => {
@@ -11,28 +12,31 @@ const StarMatch = () => {
   const [stars, setStars] = useState(Utils.random(1, 9));
   const [availableNums, setAvailableNums] = useState(Utils.range(1, 9)); // số number bấm đc
   const [candidateNums, setCandidateNums] = useState([]); // số nút đã bấm
-  const [timeLeft, setTimeLeft] = useState(10); // số nút đã bấm
+  const [secondsLeft, setSecondsLeft] = useState(10); // số nút đã bấm
 
   useEffect(() => {
-    if (timeLeft > 0) {
-      setTimeout(() => {
-
+    if (secondsLeft > 0 && availableNums.length > 0) {
+      const timerId = setInterval(() => {
+        setSecondsLeft(secondsLeft - 1);
       }, 1000);
+      return () => clearInterval(timerId);
     }
   });
 
-
-  const candidatesAreWrong = Utils.sum(candidateNums) > stars;
-  const isEndGame = availableNums.length === 0;
+  let candidatesAreWrong = Utils.sum(candidateNums) > stars;
+  let gameStatus = availableNums.length === 0
+    ? WIN
+    : secondsLeft === 0 ? LOST : ACTIVE
 
   const resetGame = () => {
     setStars(Utils.random(1, 9));
     setAvailableNums(Utils.range(1, 9));
     setCandidateNums([]);
+    setSecondsLeft(10);
   };
 
   const onNumberClick = (number, currentStatus) => {
-    if (currentStatus === USED) {
+    if (gameStatus !== ACTIVE || currentStatus === USED) {
       return;
     }
 
@@ -60,9 +64,9 @@ const StarMatch = () => {
         <div className="body">
           <div className="left">
             {
-              isEndGame ?
+              gameStatus !== ACTIVE ?
                 <PlayAgainBtn
-                  onClick={resetGame}
+                  onClick={resetGame} gameStatus={gameStatus}
                 />
                 :
                 <StarList stars={stars}/>
@@ -77,7 +81,7 @@ const StarMatch = () => {
             />
           </div>
         </div>
-        <div className="timer">Time Remaining: 10</div>
+        <div className="timer">Time Remaining: {secondsLeft}</div>
       </div>
 
     </div>
